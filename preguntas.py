@@ -11,6 +11,22 @@ Utilice el archivo `data.csv` para resolver las preguntas.
 
 
 """
+import sys
+import preguntas
+from datetime import datetime
+
+file=open("data.csv","r") #Obtengo el archivo y lo guardo en file
+lines=file.readlines() #Lee el archivo y devuelve una lista
+file.close()
+data=[]
+for line in lines:
+    nline=line.replace("\n","")
+    raw=nline.split("\t")
+    raw[1]=int(raw[1])
+    raw[2]=raw[2].split("-")
+    raw[3]=raw[3].split(",")
+    raw[4]=raw[4].split(",")
+    data.append(raw) #Creando una lista de listas
 
 
 def pregunta_01():
@@ -21,8 +37,11 @@ def pregunta_01():
     214
 
     """
-    return
 
+    i=0
+    for raw in data:
+        i=i+raw[1]
+    return i
 
 def pregunta_02():
     """
@@ -39,7 +58,21 @@ def pregunta_02():
     ]
 
     """
-    return
+
+    letras=list(dict.fromkeys(raw[0] for raw in data)) #manera fácil para filtrar y resulta en un diccionario
+    letras=sorted(letras)
+
+    pup=[]
+
+    for letra in letras:
+        count=0
+        for raw in data:
+            if raw[0]==letra:
+                count=count+1
+        
+        pup.append((letra,count))
+
+    return pup
 
 
 def pregunta_03():
@@ -57,7 +90,20 @@ def pregunta_03():
     ]
 
     """
-    return
+
+    letras=list(dict.fromkeys(raw[0] for raw in data))
+    letras=sorted(letras)
+
+    lista3=[]
+
+    for letra in letras:
+        suma=0
+        for raw in data:
+            if raw[0]==letra:
+                suma=suma+raw[1]
+        lista3.append((letra, suma))
+
+    return lista3
 
 
 def pregunta_04():
@@ -82,7 +128,21 @@ def pregunta_04():
     ]
 
     """
-    return
+
+    fechas=list(dict.fromkeys(raw[2][1] for raw in data)) #manera fácil para filtrar y resulta en un diccionario
+    fechas=sorted(fechas)
+
+    fech=[]
+
+    for fecha in fechas:
+        count=0
+        for raw in data:
+            if raw[2][1]==fecha:
+                count=count+1
+        
+        fech.append((fecha,count))
+
+    return fech
 
 
 def pregunta_05():
@@ -100,7 +160,18 @@ def pregunta_05():
     ]
 
     """
-    return
+    columnap5=list(dict.fromkeys(raw[0] for raw in data)) #manera fácil para filtrar y resulta en un diccionario
+    columnap5=sorted(columnap5)
+
+    column5=[]
+
+    for columna in columnap5:
+        nums=[int(raw[1]) for raw in data if raw[0]==columna]
+        
+        column5.append((columna,max(nums),min(nums)))
+
+    
+    return column5
 
 
 def pregunta_06():
@@ -125,7 +196,23 @@ def pregunta_06():
     ]
 
     """
-    return
+    listakeys=[]
+    for raw in data:
+        for key in raw[4]:
+            listakeys.append(key.split(":"))
+
+
+    columnap6=list(dict.fromkeys(listakey[0] for listakey in listakeys)) #manera fácil para filtrar y resulta en un diccionario
+    columnap6=sorted(columnap6)
+
+    column6=[]
+
+    for columna in columnap6:
+        nums=[int(lk[1]) for lk in listakeys if lk[0]==columna]  #Se usa int para cambiar el tipo de dato de la lista que es un string
+        column6.append((columna,min(nums),max(nums)))
+
+    
+    return column6
 
 
 def pregunta_07():
@@ -149,7 +236,22 @@ def pregunta_07():
     ]
 
     """
-    return
+    numeros=list(dict.fromkeys(raw[1] for raw in data)) #manera fácil para filtrar y resulta en un diccionario
+    numeros=sorted(numeros)
+
+    
+    lista=[]
+
+    for numero in numeros:
+        lista_letras=[]
+        for raw in data:
+            if raw[1]==numero:
+                lista_letras.append(raw[0])
+        
+        lista.append((numero,lista_letras))
+    
+    
+    return lista
 
 
 def pregunta_08():
@@ -174,7 +276,24 @@ def pregunta_08():
     ]
 
     """
-    return
+    numeros=list(dict.fromkeys(raw[1] for raw in data)) #manera fácil para filtrar y resulta en un diccionario
+    numeros=sorted(numeros)
+
+    
+    lista=[]
+
+    for numero in numeros:
+        lista_letras=[]
+        for raw in data:
+            if raw[1]==numero:
+                lista_letras.append(raw[0])
+            
+        
+        lista_letras=list(dict.fromkeys(lista_letras))
+        lista.append((numero,lista_letras))
+    
+
+    return lista
 
 
 def pregunta_09():
@@ -197,7 +316,28 @@ def pregunta_09():
     }
 
     """
-    return
+    lista_claves=[]
+    for raw in data:
+        for clave in raw[4]:
+            lista_claves.append(clave[0:clave.index(":")])
+
+    dicc=list(dict.fromkeys(lista_claves)) #manera fácil para filtrar y resulta en un diccionario
+    dicc=sorted(dicc)
+
+    claves={} 
+
+    for dic in dicc:
+        count=0
+        for clave in lista_claves:
+            if clave==dic:
+                count=count+1
+        
+        claves[dic]=count
+
+    
+    #print(claves)
+    
+    return claves
 
 
 def pregunta_10():
@@ -218,7 +358,13 @@ def pregunta_10():
 
 
     """
-    return
+    lista_10=[]
+    for raw in data:
+        lista_10.append((raw[0],len(raw[3]),len(raw[4])))
+
+    
+    
+    return lista_10
 
 
 def pregunta_11():
@@ -239,7 +385,23 @@ def pregunta_11():
 
 
     """
-    return
+    import json 
+    diccionario={}
+
+    for raw in data:
+        for letra in raw[3]:
+            if letra not in diccionario:
+                diccionario[letra]=0
+            diccionario[letra]=diccionario[letra]+raw[1]
+    
+    diccionario=json.dumps(diccionario,sort_keys=True)
+
+    diccionario=json.loads(diccionario)
+    
+    
+    return diccionario
+
+
 
 
 def pregunta_12():
@@ -257,4 +419,28 @@ def pregunta_12():
     }
 
     """
-    return
+    import csv
+    with open ("data.csv","r") as file:
+        data = file.readlines()
+
+    data = [row.replace('\n','')for row in data]
+    data1 = [(row.split('\t')[0],(row.split('\t')[-1])) for row in data]
+    data2 = []
+    for i in data1:
+        data3 = i[1].split(",")
+        for h in data3:
+            data4 = int(h.split(":")[1])
+            data5= (i[0], data4)
+            data2.append(data5)
+    diccionario = {}
+    for row in data2:
+        key = row[0]
+        valor = int(row[1])
+        if key in diccionario:
+            diccionario[key] += valor
+        else:
+            diccionario[key] = valor
+
+    diccionario1 = dict(sorted(diccionario.items(), key=lambda item: item[0]))
+    
+    return diccionario1
